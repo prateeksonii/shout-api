@@ -31,3 +31,32 @@ export const createUser: RequestHandler = async (req, res, next) => {
     next(error);
   }
 };
+
+export const createUserContact: RequestHandler = async (req, res, next) => {
+  try {
+    const { userId } = req;
+    const { contactId } = req.body;
+
+    console.log({ userId, contactId });
+
+    const user = await prisma.user.update({
+      where: {
+        id: userId,
+      },
+      include: {
+        contacts: true,
+      },
+      data: {
+        contacts: {
+          create: {
+            contactId,
+          },
+        },
+      },
+    });
+    res.status(201).json(user);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
